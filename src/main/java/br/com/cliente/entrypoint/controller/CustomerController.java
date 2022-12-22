@@ -1,14 +1,14 @@
 package br.com.cliente.entrypoint.controller;
 
+import br.com.cliente.core.domain.Customer;
+import br.com.cliente.core.usecase.FindCustomerByIdUseCase;
 import br.com.cliente.core.usecase.InsertCustomerUseCase;
 import br.com.cliente.entrypoint.controller.mapper.CustomerMapper;
 import br.com.cliente.entrypoint.controller.request.CustomerRequest;
+import br.com.cliente.entrypoint.controller.response.CustomerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -20,6 +20,9 @@ public class CustomerController {
     private InsertCustomerUseCase insertCustomerUseCase;
 
     @Autowired
+    private FindCustomerByIdUseCase findCustomerByIdUseCase;
+
+    @Autowired
     private CustomerMapper customerMapper;
 
 
@@ -29,5 +32,15 @@ public class CustomerController {
         insertCustomerUseCase.insert(customer, customerRequest.getZipCode());
         return ResponseEntity.ok().build();
     }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerResponse> findById(@PathVariable String id){
+        var customer = findCustomerByIdUseCase.find(id);
+        var customerResponse = customerMapper.toCustomerResponse(customer);
+        return ResponseEntity.ok(customerResponse);
+    }
+
+
 
 }
