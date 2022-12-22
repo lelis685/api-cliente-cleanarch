@@ -1,5 +1,6 @@
 package br.com.cliente.entrypoint.controller;
 
+import br.com.cliente.core.dataprovider.DeleteCustomerById;
 import br.com.cliente.core.domain.Customer;
 import br.com.cliente.core.usecase.FindCustomerByIdUseCase;
 import br.com.cliente.core.usecase.InsertCustomerUseCase;
@@ -29,6 +30,9 @@ public class CustomerController {
     @Autowired
     private CustomerMapper customerMapper;
 
+    @Autowired
+    private DeleteCustomerById deleteCustomerById;
+
 
     @PostMapping
     public ResponseEntity<Void> insert(@Valid @RequestBody CustomerRequest customerRequest){
@@ -51,11 +55,15 @@ public class CustomerController {
         var customer = customerMapper.toCustomer(customerRequest);
         customer.setId(id);
         updateCustomerUseCase.update(customer, customerRequest.getZipCode());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
 
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable String id){
+        deleteCustomerById.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 
 
 
